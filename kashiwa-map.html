@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+  <title>柏市マップ（Leaflet）</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="nav.css" />
+  <style>
+    #map { height: 100vh; width: 100vw; touch-action: none; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { -webkit-tap-highlight-color: transparent; }
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 100vw;
+      max-width: 500px;
+      height: 110px;
+      background: url('haikei.png') no-repeat center bottom/cover;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 1000;
+      pointer-events: auto;
+      padding: 0 2vw;
+    }
+    .bottom-nav .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      width: 32vw;
+      max-width: 120px;
+      min-width: 80px;
+      height: 90px;
+      background: url('botan.png') no-repeat center/contain;
+      background-size: 100% 100%;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-family: 'Press Start 2P', 'Arial', sans-serif;
+      color: #fff;
+      font-size: 14px;
+      transition: transform 0.1s;
+      margin: 0 0.5vw;
+      box-sizing: border-box;
+    }
+    .bottom-nav .nav-btn.selected {
+      filter: brightness(1.2) drop-shadow(0 0 8px #fff7);
+      transform: scale(1.08);
+    }
+    .bottom-nav .nav-btn img {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 4px;
+    }
+    .bottom-nav .nav-btn span {
+      margin-bottom: 2px;
+    }
+    @media (max-width: 400px) {
+      .bottom-nav { height: 80px; }
+      .bottom-nav .nav-btn { width: 32vw; height: 70px; font-size: 11px; min-width: 60px; }
+      .bottom-nav .nav-btn img { width: 36px; height: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <nav class="bottom-nav" style="background: url('haikei.png') no-repeat center bottom/cover;">
+    <button class="nav-btn selected" id="questBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
+      <img src="logo.png" alt="LOGO" class="nav-logo">
+      <img src="quest.png" alt="QUEST" class="nav-label">
+    </button>
+    <button class="nav-btn" id="cameraBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
+      <img src="logo.png" alt="LOGO" class="nav-logo">
+      <img src="quest.png" alt="QUEST" class="nav-label">
+    </button>
+    <button class="nav-btn" id="minstaBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
+      <img src="logo.png" alt="LOGO" class="nav-logo">
+      <img src="quest.png" alt="QUEST" class="nav-label">
+    </button>
+  </nav>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // 柏の葉キャンパスの中心座標
+    var kashiwanohaLatLng = [35.897222, 139.952222]; // 柏の葉キャンパス駅付近
+    var map = L.map('map').setView(kashiwanohaLatLng, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // スマホでのピンチズームやスクロールをLeafletに委ねる
+    map.scrollWheelZoom.enable();
+    map.touchZoom.enable();
+    map.dragging.enable();
+    map.tap = true;
+
+    document.getElementById('questBtn').addEventListener('click', function() {
+      window.location.href = 'https://www.udck.jp/';
+    });
+  </script>
+</body>
+</html>

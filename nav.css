@@ -1,0 +1,60 @@
+/* ボトムナビゲーションのスタイル */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100vw;
+  max-width: 500px;
+  height: 110px;
+  background: url('haikei.png') no-repeat center bottom/cover;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 1000;
+  pointer-events: auto;
+  padding: 0 2vw;
+}
+
+.bottom-nav .nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 32vw;
+  max-width: 120px;
+  min-width: 80px;
+  height: 90px;
+  background: url('botan.png') no-repeat center/contain;
+  background-size: 100% 100%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: 'Press Start 2P', 'Arial', sans-serif;
+  color: #fff;
+  font-size: 14px;
+  transition: transform 0.1s;
+  margin: 0 0.5vw;
+  box-sizing: border-box;
+}
+
+.bottom-nav .nav-btn.selected {
+  filter: brightness(1.2) drop-shadow(0 0 8px #fff7);
+  transform: scale(1.08);
+}
+
+.bottom-nav .nav-btn img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 4px;
+}
+
+.bottom-nav .nav-btn span {
+  margin-bottom: 2px;
+}
+
+@media (max-width: 400px) {
+  .bottom-nav { height: 80px; }
+  .bottom-nav .nav-btn { width: 32vw; height: 70px; font-size: 11px; min-width: 60px; }
+  .bottom-nav .nav-btn img { width: 36px; height: 36px; }
+}
