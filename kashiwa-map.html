@@ -123,16 +123,10 @@
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         qrCodeMessage => {
-          // QRコード内容がURLなら新しいタブで開く（スマホSafari対策でlocation.hrefも試す）
+          // QRコード内容がURLなら遷移（iOS対策: window.location.replace）
           if (/^https?:\/\//.test(qrCodeMessage)) {
-            try {
-              window.open(qrCodeMessage, '_blank');
-              setTimeout(function() {
-                window.location.href = qrCodeMessage;
-              }, 500);
-            } catch (e) {
-              window.location.href = qrCodeMessage;
-            }
+            // iOSのPWAやSafariではwindow.open/_blankが効かないためlocation.replaceを優先
+            window.location.replace(qrCodeMessage);
           } else {
             alert('QRコード内容: ' + qrCodeMessage);
           }
