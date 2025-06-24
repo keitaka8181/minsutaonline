@@ -51,6 +51,15 @@
       filter: brightness(1.2) drop-shadow(0 0 8px #fff7);
       transform: scale(1.08);
     }
+    .bottom-nav .nav-btn:active {
+      transform: scale(0.93) rotate(-2deg);
+      filter: brightness(0.85) drop-shadow(0 0 8px #0008);
+      transition: transform 0.08s, filter 0.08s;
+    }
+    .bottom-nav .nav-btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: -4px;
+    }
     .bottom-nav .nav-btn img {
       width: 48px;
       height: 48px;
@@ -82,7 +91,14 @@
       <img src="quest.png" alt="QUEST" class="nav-label">
     </button>
   </nav>
+  <div id="qr-reader" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:2000; justify-content:center; align-items:center;">
+    <div id="qr-reader-box" style="width:320px; max-width:90vw; background:#222; border-radius:12px; padding:16px; box-shadow:0 0 24px #000a;">
+      <div id="qr-reader-area" style="width:100%;"></div>
+      <button id="qr-close-btn" style="margin-top:12px; width:100%; padding:8px; font-size:1.1em; border-radius:6px; border:none; background:#444; color:#fff;">閉じる</button>
+    </div>
+  </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script>
     // 柏の葉キャンパスの中心座標
     var kashiwanohaLatLng = [35.897222, 139.952222]; // 柏の葉キャンパス駅付近
@@ -98,7 +114,27 @@
     map.tap = true;
 
     document.getElementById('questBtn').addEventListener('click', function() {
-      window.location.href = 'https://www.udck.jp/';
+      // QRコードリーダーを表示
+      document.getElementById('qr-reader').style.display = 'flex';
+      if (!window.html5QrCode) {
+        window.html5QrCode = new Html5Qrcode("qr-reader-area");
+      }
+      window.html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrCodeMessage => {
+          alert('QRコード内容: ' + qrCodeMessage);
+          window.html5QrCode.stop();
+          document.getElementById('qr-reader').style.display = 'none';
+        },
+        errorMessage => {
+          // 読み取りエラーは無視
+        }
+      );
+    });
+    document.getElementById('qr-close-btn').addEventListener('click', function() {
+      document.getElementById('qr-reader').style.display = 'none';
+      if (window.html5QrCode) window.html5QrCode.stop();
     });
   </script>
 </body>
