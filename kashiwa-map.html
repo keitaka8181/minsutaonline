@@ -7,6 +7,14 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="nav.css" />
   <style>
+    #frame {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: url('frame_map.png') no-repeat center center/cover;
+      /* frame_map.pngは昔の地図風フレーム画像を想定 */
+    }
     #map { height: 100vh; width: 100vw; touch-action: none; }
     html, body { margin: 0; padding: 0; height: 100%; }
     body { -webkit-tap-highlight-color: transparent; }
@@ -22,7 +30,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      z-index: 1000;
+      z-index: 2002;
       pointer-events: auto;
       padding: 0 2vw;
     }
@@ -77,6 +85,7 @@
   </style>
 </head>
 <body>
+  <div id="frame"></div>
   <div id="map"></div>
   <nav class="bottom-nav" style="background: url('haikei.png') no-repeat center bottom/cover;">
     <button class="nav-btn selected" id="questBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
@@ -88,8 +97,8 @@
       <img src="camera.png" alt="CAMERA" class="nav-label">
     </button>
     <button class="nav-btn" id="minstaBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
-      <img src="logo.png" alt="LOGO" class="nav-logo">
-      <img src="quest.png" alt="QUEST" class="nav-label">
+      <img src="inf_logo.png" alt="MINSTA" class="nav-logo">
+      <img src="minsta.png" alt="MINSTA" class="nav-label">
     </button>
   </nav>
   <div id="qr-reader" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:2000; justify-content:center; align-items:center;">
@@ -140,6 +149,13 @@
     document.getElementById('qr-close-btn').addEventListener('click', function() {
       document.getElementById('qr-reader').style.display = 'none';
       if (window.html5QrCode) window.html5QrCode.stop();
+    });
+    document.getElementById('minstaBtn').addEventListener('click', function() {
+      window.location.href = 'https://kashiwa-no-ha.liqlid.jp/';
+    });
+    document.getElementById('questBtn').addEventListener('click', function() {
+      // 柏の葉キャンパス駅付近にさらにズーム（縮小）
+      map.setView([35.897222, 139.952222], 19, { animate: true });
     });
   </script>
 </body>
