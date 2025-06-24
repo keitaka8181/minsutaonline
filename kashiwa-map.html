@@ -48,8 +48,9 @@
       box-sizing: border-box;
     }
     .bottom-nav .nav-btn.selected {
-      filter: brightness(1.2) drop-shadow(0 0 8px #fff7);
-      transform: scale(1.08);
+      /* 明るさ・拡大をやめて通常ボタンと同じに */
+      filter: none;
+      transform: none;
     }
     .bottom-nav .nav-btn:active {
       transform: scale(0.93) rotate(-2deg);
@@ -83,8 +84,8 @@
       <img src="quest.png" alt="QUEST" class="nav-label">
     </button>
     <button class="nav-btn" id="cameraBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
-      <img src="logo.png" alt="LOGO" class="nav-logo">
-      <img src="quest.png" alt="QUEST" class="nav-label">
+      <img src="camera_logo.png" alt="CAMERA" class="nav-logo">
+      <img src="camera.png" alt="CAMERA" class="nav-label">
     </button>
     <button class="nav-btn" id="minstaBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
       <img src="logo.png" alt="LOGO" class="nav-logo">
@@ -113,8 +114,8 @@
     map.dragging.enable();
     map.tap = true;
 
-    document.getElementById('questBtn').addEventListener('click', function() {
-      // QRコードリーダーを表示
+    // QRコードリーダーの起動を真ん中のボタン（cameraBtn）に移動
+    document.getElementById('cameraBtn').addEventListener('click', function() {
       document.getElementById('qr-reader').style.display = 'flex';
       if (!window.html5QrCode) {
         window.html5QrCode = new Html5Qrcode("qr-reader-area");
@@ -123,9 +124,7 @@
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         qrCodeMessage => {
-          // QRコード内容がURLなら遷移（iOS対策: window.location.replace）
           if (/^https?:\/\//.test(qrCodeMessage)) {
-            // iOSのPWAやSafariではwindow.open/_blankが効かないためlocation.replaceを優先
             window.location.replace(qrCodeMessage);
           } else {
             alert('QRコード内容: ' + qrCodeMessage);
