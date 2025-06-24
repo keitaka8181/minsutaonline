@@ -123,9 +123,16 @@
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         qrCodeMessage => {
-          // QRコード内容がURLなら新しいタブで開く
+          // QRコード内容がURLなら新しいタブで開く（スマホSafari対策でlocation.hrefも試す）
           if (/^https?:\/\//.test(qrCodeMessage)) {
-            window.open(qrCodeMessage, '_blank');
+            try {
+              window.open(qrCodeMessage, '_blank');
+              setTimeout(function() {
+                window.location.href = qrCodeMessage;
+              }, 500);
+            } catch (e) {
+              window.location.href = qrCodeMessage;
+            }
           } else {
             alert('QRコード内容: ' + qrCodeMessage);
           }
