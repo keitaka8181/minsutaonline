@@ -123,7 +123,12 @@
         { facingMode: "environment" },
         { fps: 10, qrbox: 250 },
         qrCodeMessage => {
-          alert('QRコード内容: ' + qrCodeMessage);
+          // QRコード内容がURLなら新しいタブで開く
+          if (/^https?:\/\//.test(qrCodeMessage)) {
+            window.open(qrCodeMessage, '_blank');
+          } else {
+            alert('QRコード内容: ' + qrCodeMessage);
+          }
           window.html5QrCode.stop();
           document.getElementById('qr-reader').style.display = 'none';
         },
