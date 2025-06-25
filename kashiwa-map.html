@@ -82,6 +82,17 @@
     .bottom-nav .nav-btn span {
       margin-bottom: 2px;
     }
+    #site-logo {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 60px;
+      background: url('アートボード1@4x.png') no-repeat center center/contain;
+      z-index: 2100;
+      pointer-events: none;
+    }
     @media (max-width: 400px) {
       .bottom-nav { height: 80px; }
       .bottom-nav .nav-btn { width: 32vw; height: 70px; font-size: 11px; min-width: 60px; }
@@ -90,6 +101,7 @@
   </style>
 </head>
 <body>
+  <div id="site-logo"></div>
   <div id="frame"></div>
   <div id="map"></div>
   <nav class="bottom-nav" style="background: url('haikei.png') no-repeat center bottom/cover;">
@@ -137,18 +149,24 @@
       }).addTo(map);
     });
 
-    // --- basyo.geojsonから半径50mの円を表示 ---
+    // --- basyo.geojsonから半径50mの円を表示し、タップ/クリックで名前表示 ---
     fetch('basyo.geojson')
       .then(res => res.json())
       .then(geojson => {
         geojson.features.forEach(f => {
           const [lng, lat] = f.geometry.coordinates;
-          L.circle([lat, lng], {
+          const name = f.properties && f.properties.name ? f.properties.name : '名称未設定';
+          // 赤い円
+          const circle = L.circle([lat, lng], {
             color: '#ff6600',
             fillColor: '#ff6600',
             fillOpacity: 0.25,
             radius: 50
           }).addTo(map);
+          // タップ/クリックでポップアップ表示
+          circle.on('click', function(e) {
+            circle.bindPopup(name).openPopup();
+          });
         });
       });
 
@@ -191,6 +209,34 @@
     document.getElementById('questBtn').addEventListener('click', function() {
       // 柏の葉キャンパス駅付近にズーム（少し引き気味に）
       map.setView([35.893261289659726, 139.95253805847645], 16, { animate: true });
+    });
+
+    // --- basyo.geojsonから半径50mの円を表示し、マウスオーバーで名前表示 ---
+    let redCircleCenters = [];
+    fetch('basyo.geojson')
+      .then(res => res.json())
+      .then(geojson => {
+        geojson.features.forEach(f => {
+          const [lng, lat] = f.geometry.coordinates;
+          const name = f.properties && f.properties.name ? f.properties.name : '名称未設定';
+          // 赤い円
+          const circle = L.circle([lat, lng], {
+            color: '#ff6600',
+            fillColor: '#ff6600',
+            fillOpacity: 0.25,
+            radius: 50
+          }).addTo(map);
+          // ポップアップ（マウスオーバーで表示）
+          circle.bindTooltip(name, {permanent: false, direction: 'top', sticky: true});
+          redCircleCenters.push([lat, lng]);
+        });
+      });
+
+    // QUESTボタンで赤い円の中心にズーム
+    document.getElementById('questBtn').addEventListener('click', function() {
+      if (redCircleCenters.length > 0) {
+        map.setView(redCircleCenters[0], 16, { animate: true });
+      }
     });
   </script>
 </body>
