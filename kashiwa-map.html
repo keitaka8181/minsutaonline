@@ -65,6 +65,11 @@
       filter: brightness(0.85) drop-shadow(0 0 8px #0008);
       transition: transform 0.08s, filter 0.08s;
     }
+    .bottom-nav .nav-btn:hover {
+      filter: brightness(1.15) drop-shadow(0 0 10px #fff8);
+      transform: scale(1.05) rotate(-1deg);
+      transition: transform 0.12s, filter 0.12s;
+    }
     .bottom-nav .nav-btn:focus-visible {
       outline: 2px solid #fff;
       outline-offset: -4px;
@@ -111,7 +116,7 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script>
     // 柏の葉キャンパスの中心座標
-    var kashiwanohaLatLng = [35.897222, 139.952222]; // 柏の葉キャンパス駅付近
+    var kashiwanohaLatLng = [35.893261289659726, 139.95253805847645]; // 柏の葉キャンパス駅付近
     var map = L.map('map').setView(kashiwanohaLatLng, 15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -154,8 +159,8 @@
       window.location.href = 'https://kashiwa-no-ha.liqlid.jp/';
     });
     document.getElementById('questBtn').addEventListener('click', function() {
-      // 柏の葉キャンパス駅付近にさらにズーム（縮小）
-      map.setView([35.897222, 139.952222], 19, { animate: true });
+      // 柏の葉キャンパス駅付近にズーム（少し引き気味に）
+      map.setView([35.893261289659726, 139.95253805847645], 16, { animate: true });
     });
   </script>
 </body>
