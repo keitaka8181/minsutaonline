@@ -122,6 +122,36 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // data.csvの内容をJSで直接埋め込み（本来はfetch等で読み込むが、今回は静的に記述）
+    const points = [
+      { name: '���̗t�A�N�A�e���X', lat: 35.8986869739477, lng: 139.95321731169324 },
+      { name: 'KOIL by Mitsuifudosan', lat: 35.89523479925626, lng: 139.95188921115633 },
+      { name: '������������', lat: 35.89457169213202, lng: 139.95281669581382 }
+    ];
+    points.forEach(p => {
+      L.circle([p.lat, p.lng], {
+        color: '#3388ff',
+        fillColor: '#3388ff',
+        fillOpacity: 0.25,
+        radius: 50
+      }).addTo(map);
+    });
+
+    // --- basyo.geojsonから半径50mの円を表示 ---
+    fetch('basyo.geojson')
+      .then(res => res.json())
+      .then(geojson => {
+        geojson.features.forEach(f => {
+          const [lng, lat] = f.geometry.coordinates;
+          L.circle([lat, lng], {
+            color: '#ff6600',
+            fillColor: '#ff6600',
+            fillOpacity: 0.25,
+            radius: 50
+          }).addTo(map);
+        });
+      });
+
     // スマホでのピンチズームやスクロールをLeafletに委ねる
     map.scrollWheelZoom.enable();
     map.touchZoom.enable();
