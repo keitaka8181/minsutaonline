@@ -227,7 +227,7 @@
             radius: 50
           }).addTo(map);
           // ポップアップ（マウスオーバーで表示）
-          circle.bindTooltip(name, {permanent: false, direction: 'top', sticky: true});
+          circle.bindTooltip(name, {permanent: false, direction: 'top'});
           redCircleCenters.push([lat, lng]);
         });
       });
@@ -235,6 +235,7 @@
     // QUESTボタンで赤い円の中心にズーム
     document.getElementById('questBtn').addEventListener('click', function() {
       if (redCircleCenters.length > 0) {
+        // 最初の赤い円の中心にズーム（ズームレベル16）
         map.setView(redCircleCenters[0], 16, { animate: true });
       }
     });
