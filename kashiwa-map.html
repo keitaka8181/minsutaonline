@@ -3,117 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-  <title>柏市マップ（Leaflet）</title>
+  <title>柏の葉クエスト</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="nav.css" />
   <style>
-    #frame {
-      position: fixed;
-      pointer-events: none;
-      z-index: 1000;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: url('frame_map.png') no-repeat center center/cover;
-      /* frame_map.pngは昔の地図風フレーム画像を想定 */
-    }
-    #map { height: 100vh; width: 100vw; touch-action: none; }
-    html, body { margin: 0; padding: 0; height: 100%; }
-    body { -webkit-tap-highlight-color: transparent; }
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
-      width: 100vw;
-      max-width: 500px;
-      height: 110px;
-      background: url('haikei.png') no-repeat center bottom/cover;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      z-index: 2002;
-      pointer-events: auto;
-      padding: 0 2vw;
-    }
-    .bottom-nav .nav-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      width: 32vw;
-      max-width: 120px;
-      min-width: 80px;
-      height: 90px;
-      background: url('botan.png') no-repeat center/contain;
-      background-size: 100% 100%;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      font-family: 'Press Start 2P', 'Arial', sans-serif;
-      color: #fff;
-      font-size: 14px;
-      transition: transform 0.1s;
-      margin: 0 0.5vw;
-      box-sizing: border-box;
-    }
-    .bottom-nav .nav-btn.selected {
-      /* 明るさ・拡大をやめて通常ボタンと同じに */
-      filter: none;
-      transform: none;
-    }
-    .bottom-nav .nav-btn:active {
-      transform: scale(0.93) rotate(-2deg);
-      filter: brightness(0.85) drop-shadow(0 0 8px #0008);
-      transition: transform 0.08s, filter 0.08s;
-    }
-    .bottom-nav .nav-btn:hover {
-      filter: brightness(1.15) drop-shadow(0 0 10px #fff8);
-      transform: scale(1.05) rotate(-1deg);
-      transition: transform 0.12s, filter 0.12s;
-    }
-    .bottom-nav .nav-btn:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: -4px;
-    }
-    .bottom-nav .nav-btn img {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 4px;
-    }
-    .bottom-nav .nav-btn span {
-      margin-bottom: 2px;
-    }
-    #site-logo {
-      position: fixed;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 180px;
-      height: 60px;
-      background: url('アートボード1@4x.png') no-repeat center center/contain;
-      z-index: 2100;
-      pointer-events: none;
-    }
-    @media (max-width: 400px) {
-      .bottom-nav { height: 80px; }
-      .bottom-nav .nav-btn { width: 32vw; height: 70px; font-size: 11px; min-width: 60px; }
-      .bottom-nav .nav-btn img { width: 36px; height: 36px; }
-    }
   </style>
 </head>
 <body>
-  <div id="site-logo"></div>
-  <div id="frame"></div>
+  <div class="site-logo"></div>
+  <div class="frame"></div>
   <div id="map"></div>
-  <nav class="bottom-nav" style="background: url('haikei.png') no-repeat center bottom/cover;">
-    <button class="nav-btn selected" id="questBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
+  <nav class="bottom-nav">
+    <button class="nav-btn selected" id="questBtn">
       <img src="logo.png" alt="LOGO" class="nav-logo">
       <img src="quest.png" alt="QUEST" class="nav-label">
     </button>
-    <button class="nav-btn" id="cameraBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
+    <button class="nav-btn" id="cameraBtn">
       <img src="camera_logo.png" alt="CAMERA" class="nav-logo">
       <img src="camera.png" alt="CAMERA" class="nav-label">
     </button>
-    <button class="nav-btn" id="minstaBtn" style="background: url('botan.png') no-repeat center/contain; background-size: 100% 100%;">
+    <button class="nav-btn" id="minstaBtn">
       <img src="inf_logo.png" alt="MINSTA" class="nav-logo">
       <img src="minsta.png" alt="MINSTA" class="nav-label">
     </button>
@@ -134,28 +43,13 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // data.csvの内容をJSで直接埋め込み（本来はfetch等で読み込むが、今回は静的に記述）
-    const points = [
-      { name: '���̗t�A�N�A�e���X', lat: 35.8986869739477, lng: 139.95321731169324 },
-      { name: 'KOIL by Mitsuifudosan', lat: 35.89523479925626, lng: 139.95188921115633 },
-      { name: '������������', lat: 35.89457169213202, lng: 139.95281669581382 }
-    ];
-    points.forEach(p => {
-      L.circle([p.lat, p.lng], {
-        color: '#3388ff',
-        fillColor: '#3388ff',
-        fillOpacity: 0.25,
-        radius: 50
-      }).addTo(map);
-    });
-
     // --- basyo.geojsonから半径50mの円を表示し、タップ/クリックで名前表示 ---
     fetch('basyo.geojson')
       .then(res => res.json())
       .then(geojson => {
         geojson.features.forEach(f => {
           const [lng, lat] = f.geometry.coordinates;
-          const name = f.properties && f.properties.name ? f.properties.name : '名称未設定';
+          const name = f.properties.location;
           // 赤い円
           const circle = L.circle([lat, lng], {
             color: '#ff6600',
@@ -210,27 +104,6 @@
       // 柏の葉キャンパス駅付近にズーム（少し引き気味に）
       map.setView([35.893261289659726, 139.95253805847645], 16, { animate: true });
     });
-
-    // --- basyo.geojsonから半径50mの円を表示し、マウスオーバーで名前表示 ---
-    let redCircleCenters = [];
-    fetch('basyo.geojson')
-      .then(res => res.json())
-      .then(geojson => {
-        geojson.features.forEach(f => {
-          const [lng, lat] = f.geometry.coordinates;
-          const name = f.properties && f.properties.name ? f.properties.name : '名称未設定';
-          // 赤い円
-          const circle = L.circle([lat, lng], {
-            color: '#ff6600',
-            fillColor: '#ff6600',
-            fillOpacity: 0.25,
-            radius: 50
-          }).addTo(map);
-          // ポップアップ（マウスオーバーで表示）
-          circle.bindTooltip(name, {permanent: false, direction: 'top'});
-          redCircleCenters.push([lat, lng]);
-        });
-      });
 
     // QUESTボタンで赤い円の中心にズーム
     document.getElementById('questBtn').addEventListener('click', function() {
