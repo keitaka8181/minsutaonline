@@ -21,6 +21,18 @@
       <button id="place-list-close-btn" style="width:100%; padding:8px; font-size:1.1em; border-radius:6px; border:none; background:#444; color:#fff;">閉じる</button>
     </div>
   </div>
+  <!-- パスワード入力モーダル -->
+  <div id="password-modal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:2200; justify-content:center; align-items:center;">
+    <div style="width:340px; max-width:90vw; background:#fff; border-radius:16px; padding:24px 18px 18px 18px; box-shadow:0 0 32px #000a; display:flex; flex-direction:column; align-items:center;">
+      <div id="password-modal-title" style="font-size:1.15em; font-weight:bold; margin-bottom:14px; color:#ff6600; text-align:center;"></div>
+      <input id="password-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+        placeholder="パスワードを入力"
+        style="width:90%; padding:12px; font-size:1.2em; border-radius:8px; border:1.5px solid #ff6600; margin-bottom:14px; text-align:center; letter-spacing:0.2em; background:#f9f9f9; outline:none; transition:border 0.2s;">
+      <div id="password-error" style="color:#c00; font-size:1em; min-height:1.5em; margin-bottom:6px; text-align:center;"></div>
+      <button id="password-submit-btn" style="width:90%; padding:10px; font-size:1.1em; border-radius:8px; border:none; background:#ff6600; color:#fff; font-weight:bold; margin-bottom:8px; box-shadow:0 2px 8px #ff660033;">送信</button>
+      <button id="password-close-btn" style="width:90%; padding:10px; font-size:1.1em; border-radius:8px; border:none; background:#bbb; color:#333; font-weight:bold;">閉じる</button>
+    </div>
+  </div>
   <nav class="bottom-nav">
     <button class="nav-btn selected" id="questBtn">
       <img src="logo.png" alt="LOGO" class="nav-logo">
@@ -121,12 +133,19 @@
       showPlaceListModal();
     });
 
+    // 場所ごとのパスワードとURL（3件、パスワードを4桁に変更）
+    const questPasswords = [
+      { password: "0504", url: "https://docs.google.com/forms/d/1dnLrmWnCL-qrS5YQyDsj8H1HjyIOi5PkCixRHhZp3eo/edit" },
+      { password: "0839", url: "https://www.google.com/" },
+      { password: "3300", url: "https://www.yahoo.co.jp/" }
+      // ...以降も場所数に合わせて追加...
+    ];
+
     // 場所一覧モーダルの表示・操作
     function showPlaceListModal() {
       const modal = document.getElementById('place-list-modal');
       const list = document.getElementById('place-list');
       list.innerHTML = '';
-      // 場所一覧を生成
       redCircleNames.forEach((name, idx) => {
         const li = document.createElement('li');
         li.style.padding = '8px 0';
@@ -135,12 +154,36 @@
         li.innerHTML = `<span style="font-weight:bold; color:#ff6600;">QUEST</span> ${name}`;
         li.addEventListener('click', () => {
           modal.style.display = 'none';
-          map.setView(redCircleCenters[idx], 17, { animate: true });
-          redCircleObjs[idx].openPopup();
+          showPasswordModal(idx, name);
         });
         list.appendChild(li);
       });
       modal.style.display = 'flex';
+    }
+
+    // パスワード入力モーダルの表示・操作
+    function showPasswordModal(idx, name) {
+      const modal = document.getElementById('password-modal');
+      document.getElementById('password-modal-title').textContent = `${name} のパスワードを入力`;
+      document.getElementById('password-input').value = '';
+      document.getElementById('password-error').textContent = '';
+      modal.style.display = 'flex';
+
+      // 送信ボタン
+      document.getElementById('password-submit-btn').onclick = function() {
+        let input = document.getElementById('password-input').value;
+        input = input.slice(0, 4); // 4桁に制限
+        const quest = questPasswords[idx];
+        if (quest && input === quest.password) {
+          window.open(quest.url, '_blank');
+        } else {
+          document.getElementById('password-error').textContent = 'パスワードが違います';
+        }
+      };
+      // 閉じるボタン
+      document.getElementById('password-close-btn').onclick = function() {
+        modal.style.display = 'none';
+      };
     }
     document.getElementById('place-list-close-btn').addEventListener('click', function() {
       document.getElementById('place-list-modal').style.display = 'none';
