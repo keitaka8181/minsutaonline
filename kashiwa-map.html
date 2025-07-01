@@ -13,6 +13,14 @@
   <div class="site-logo"></div>
   <div class="frame"></div>
   <div id="map"></div>
+  <!-- 場所一覧モーダル -->
+  <div id="place-list-modal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000a; z-index:2100; justify-content:center; align-items:center;">
+    <div style="width:340px; max-width:90vw; background:#fff; border-radius:12px; padding:18px 12px 12px 12px; box-shadow:0 0 24px #000a;">
+      <div style="font-size:1.2em; font-weight:bold; margin-bottom:10px;">場所一覧</div>
+      <ul id="place-list" style="list-style:none; padding:0; margin:0 0 10px 0; max-height:50vh; overflow:auto;"></ul>
+      <button id="place-list-close-btn" style="width:100%; padding:8px; font-size:1.1em; border-radius:6px; border:none; background:#444; color:#fff;">閉じる</button>
+    </div>
+  </div>
   <nav class="bottom-nav">
     <button class="nav-btn selected" id="questBtn">
       <img src="logo.png" alt="LOGO" class="nav-logo">
@@ -44,6 +52,10 @@
     }).addTo(map);
 
     // --- basyo.geojsonから半径50mの円を表示し、タップ/クリックで名前表示 ---
+    // 赤い円の中心座標と名前を格納
+    const redCircleCenters = [];
+    const redCircleNames = [];
+    const redCircleObjs = [];
     fetch('basyo.geojson')
       .then(res => res.json())
       .then(geojson => {
@@ -61,6 +73,10 @@
           circle.on('click', function(e) {
             circle.bindPopup(name).openPopup();
           });
+          // 一覧用に保存
+          redCircleCenters.push([lat, lng]);
+          redCircleNames.push(name);
+          redCircleObjs.push(circle);
         });
       });
 
@@ -101,16 +117,33 @@
       window.location.href = 'https://kashiwa-no-ha.liqlid.jp/';
     });
     document.getElementById('questBtn').addEventListener('click', function() {
-      // 柏の葉キャンパス駅付近にズーム（少し引き気味に）
-      map.setView([35.893261289659726, 139.95253805847645], 16, { animate: true });
+      // 場所一覧モーダルを表示
+      showPlaceListModal();
     });
 
-    // QUESTボタンで赤い円の中心にズーム
-    document.getElementById('questBtn').addEventListener('click', function() {
-      if (redCircleCenters.length > 0) {
-        // 最初の赤い円の中心にズーム（ズームレベル16）
-        map.setView(redCircleCenters[0], 16, { animate: true });
-      }
+    // 場所一覧モーダルの表示・操作
+    function showPlaceListModal() {
+      const modal = document.getElementById('place-list-modal');
+      const list = document.getElementById('place-list');
+      list.innerHTML = '';
+      // 場所一覧を生成
+      redCircleNames.forEach((name, idx) => {
+        const li = document.createElement('li');
+        li.style.padding = '8px 0';
+        li.style.borderBottom = '1px solid #eee';
+        li.style.cursor = 'pointer';
+        li.innerHTML = `<span style="font-weight:bold; color:#ff6600;">QUEST</span> ${name}`;
+        li.addEventListener('click', () => {
+          modal.style.display = 'none';
+          map.setView(redCircleCenters[idx], 17, { animate: true });
+          redCircleObjs[idx].openPopup();
+        });
+        list.appendChild(li);
+      });
+      modal.style.display = 'flex';
+    }
+    document.getElementById('place-list-close-btn').addEventListener('click', function() {
+      document.getElementById('place-list-modal').style.display = 'none';
     });
   </script>
 </body>
