@@ -477,13 +477,14 @@
           
           console.log('Parsed values:', values); // デバッグ用
           
-          if (values.length >= 7) {
-            // 緯度経度を分割（様々な形式に対応）
+          if (values.length >= 8) {
+            // データの順番: タイムスタンプ(0), 緯度経度(1), 問題(2), 選択肢1(3), 選択肢2(4), 選択肢3(5), 選択肢4(6), 答え(7)
             let latitude = 0;
             let longitude = 0;
             
             console.log('Processing coordinates from values[1]:', values[1]); // デバッグ用
             
+            // 緯度経度を解析（values[1]から）
             if (values[1]) {
               // カンマで区切られている場合
               if (values[1].includes(',')) {
@@ -507,89 +508,12 @@
               }
             }
             
-            // 緯度経度が0の場合は、別の列から取得を試行
-            if (latitude === 0 && longitude === 0) {
-              console.log('Coordinates are 0, trying alternative columns...'); // デバッグ用
-              
-              // 全列をチェックして緯度経度を探す
-              for (let colIndex = 0; colIndex < Math.min(values.length, 5); colIndex++) {
-                const cellValue = values[colIndex];
-                if (!cellValue) continue;
-                
-                console.log(`Checking column ${colIndex}:`, cellValue); // デバッグ用
-                
-                // カンマで区切られている場合
-                if (cellValue.includes(',')) {
-                  const coordinates = cellValue.split(',').map(coord => coord.trim());
-                  const lat = parseFloat(coordinates[0]);
-                  const lng = parseFloat(coordinates[1]);
-                  
-                  if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                    console.log(`Found coordinates in column ${colIndex}:`, lat, lng); // デバッグ用
-                    latitude = lat;
-                    longitude = lng;
-                    break;
-                  }
-                } 
-                // スペースで区切られている場合
-                else if (cellValue.includes(' ')) {
-                  const coordinates = cellValue.split(' ').map(coord => coord.trim());
-                  const lat = parseFloat(coordinates[0]);
-                  const lng = parseFloat(coordinates[1]);
-                  
-                  if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                    console.log(`Found coordinates in column ${colIndex}:`, lat, lng); // デバッグ用
-                    latitude = lat;
-                    longitude = lng;
-                    break;
-                  }
-                }
-                // 単一の数値の場合（次の列と組み合わせて試行）
-                else if (!isNaN(parseFloat(cellValue)) && parseFloat(cellValue) !== 0) {
-                  const lat = parseFloat(cellValue);
-                  const nextValue = values[colIndex + 1];
-                  
-                  if (nextValue && !isNaN(parseFloat(nextValue)) && parseFloat(nextValue) !== 0) {
-                    const lng = parseFloat(nextValue);
-                    console.log(`Found coordinates in columns ${colIndex},${colIndex + 1}:`, lat, lng); // デバッグ用
-                    latitude = lat;
-                    longitude = lng;
-                    break;
-                  }
-                }
-              }
-            }
-            
             console.log('Final coordinates:', latitude, longitude); // デバッグ用
             
-            // 緯度経度の列を特定して、他のデータの列を調整
-            let questionIndex = 2;
-            let optionsStartIndex = 3;
-            let answerIndex = 7;
-            
-            // 緯度経度が見つかった列に基づいて他の列を調整
-            if (latitude !== 0 && longitude !== 0) {
-              // 緯度経度がどの列にあるかを特定
-              let coordColumn = -1;
-              for (let colIndex = 0; colIndex < Math.min(values.length, 5); colIndex++) {
-                const cellValue = values[colIndex];
-                if (!cellValue) continue;
-                
-                if (cellValue.includes(',') || cellValue.includes(' ') || 
-                    (!isNaN(parseFloat(cellValue)) && parseFloat(cellValue) === latitude)) {
-                  coordColumn = colIndex;
-                  break;
-                }
-              }
-              
-              if (coordColumn !== -1) {
-                // 緯度経度の次の列から質問を開始
-                questionIndex = coordColumn + 1;
-                optionsStartIndex = coordColumn + 2;
-                answerIndex = coordColumn + 6;
-                console.log(`Adjusted column indices - coordinates in column ${coordColumn}, question starts at ${questionIndex}`); // デバッグ用
-              }
-            }
+            // 固定の列インデックス（データの順番に合わせて）
+            const questionIndex = 2;  // 問題
+            const optionsStartIndex = 3;  // 選択肢1
+            const answerIndex = 7;  // 答え
             
             const quiz = {
               id: i,
