@@ -1,0 +1,84 @@
+/* ボトムナビゲーションのスタイル */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  background-image: url('haikei.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  z-index: 1000;
+  padding: 0 10px;
+  width: 350px;
+  max-width: 500px;
+  min-width: 240px;
+}
+
+.bottom-nav .nav-btn {
+  position: relative;
+  top: -20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 100px;
+  background-image: url('botan.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: none;
+  transition: transform 0.1s;
+}
+
+.bottom-nav .nav-btn .nav-logo {
+  width: 40px;
+  height: 50px;
+}
+
+.bottom-nav .nav-btn .nav-label {
+  width: 40px;
+  height: 20px;
+}
+
+.bottom-nav .nav-btn:hover {
+  filter: brightness(1.15) drop-shadow(0 0 10px #fff8);
+  transform: scale(1.05) rotate(-1deg);
+  transition: transform 0.12s, filter 0.12s;
+}
+
+.bottom-nav .nav-btn img {
+  margin-bottom: 4px;
+}
+
+html, body { margin: 0; padding: 0; height: 100%; }
+
+
+/*サイトのロゴ*/
+.site-logo {
+  position: fixed;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: url('main_logo.png') no-repeat center center/contain;
+  z-index: 2100;
+  pointer-events: none;
+}
+
+/* フレームのスタイル */
+.frame {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  background: url('frame_map.png') no-repeat center center/cover;
+}
+
+/*マップ*/
+#map { height: 100vh; width: 100vw; touch-action: none; }
