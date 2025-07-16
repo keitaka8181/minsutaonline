@@ -571,7 +571,7 @@
         }
         
         console.log('Loaded quiz data:', quizData); // デバッグ用
-        createQuizMarkers();
+        createQuizMarkers(quizData);
         updateProgress();
       } catch (error) {
         console.error('スプレッドシートからのデータ読み込みに失敗しました:', error);
@@ -635,7 +635,7 @@
     }
 
     // クイズマーカーをMapboxで作成
-    function createQuizMarkers() {
+    function createQuizMarkers(quizData) {
       // 既存のマーカーを削除
       quizMarkers.forEach(m => m.remove());
       quizMarkers = [];
@@ -670,6 +670,7 @@
             </div>
           `);
         // マーカー生成
+        console.log('aaaa marker for:', quiz); // デバッグ用
         const marker = new mapboxgl.Marker(el)
           .setLngLat([quiz.longitude, quiz.latitude])
           .setPopup(popup)
