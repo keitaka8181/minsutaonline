@@ -129,36 +129,43 @@
       cursor: pointer;
     }
     
-    .quiz-progress {
+    .quiz-controls {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 1000;
+      flex-wrap: nowrap;
+      justify-content: center;
+      flex-direction: row;
+        }
+    
+    .quiz-progress {
       background: linear-gradient(135deg, #ff6600, #ff8533);
-      padding: 12px 18px;
-      border-radius: 25px;
-      font-size: 0.9em;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 0.85em;
       font-weight: bold;
       color: white;
-      z-index: 1000;
       box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
       border: 2px solid white;
+      white-space: nowrap;
     }
     
     .fly-to-quiz-btn {
-      position: fixed;
-      top: 20px;
-      right: 200px;
       background: linear-gradient(135deg, #4CAF50, #66BB6A);
-      padding: 12px 18px;
-      border-radius: 25px;
-      font-size: 0.9em;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 0.85em;
       font-weight: bold;
       color: white;
-      z-index: 1000;
       box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
       border: 2px solid white;
       cursor: pointer;
       transition: all 0.3s ease;
+      white-space: nowrap;
     }
     
     .fly-to-quiz-btn:hover {
@@ -167,20 +174,17 @@
     }
     
     .quiz-list-btn {
-      position: fixed;
-      top: 20px;
-      right: 350px;
       background: linear-gradient(135deg, #2196F3, #42A5F5);
-      padding: 12px 18px;
-      border-radius: 25px;
-      font-size: 0.9em;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 0.85em;
       font-weight: bold;
       color: white;
-      z-index: 1000;
       box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
       border: 2px solid white;
       cursor: pointer;
       transition: all 0.3s ease;
+      white-space: nowrap;
     }
     
     .quiz-list-btn:hover {
@@ -382,20 +386,23 @@
       <img src="minsta.png" alt="MINSTA" class="nav-label">
     </button>
   </nav>
-  <!-- クイズ進行状況 -->
-  <div class="quiz-progress">
-    <span id="quiz-progress-text">0 / 0 完了</span>
+  <!-- クイズコントロール -->
+  <div class="quiz-controls">
+    <!-- クイズ進行状況 -->
+    <div class="quiz-progress">
+      <span id="quiz-progress-text">0 / 0 完了</span>
+    </div>
+    
+    <!-- クイズ地点に飛ぶボタン -->
+    <button class="fly-to-quiz-btn" id="fly-to-quiz-btn" style="display: none;">
+      🎯 クイズ地点へ
+    </button>
+    
+    <!-- 問題一覧ボタン -->
+    <button class="quiz-list-btn" id="quiz-list-btn" style="display: none;">
+      📋 問題一覧
+    </button>
   </div>
-  
-  <!-- クイズ地点に飛ぶボタン -->
-  <button class="fly-to-quiz-btn" id="fly-to-quiz-btn" style="display: none;">
-    🎯 クイズ地点へ
-  </button>
-  
-  <!-- 問題一覧ボタン -->
-  <button class="quiz-list-btn" id="quiz-list-btn" style="display: none;">
-    📋 問題一覧
-  </button>
   
   <!-- クイズモーダル -->
   <div id="quiz-modal" class="quiz-modal">
@@ -445,7 +452,7 @@
     let quizData = [];
     let currentQuiz = null;
     let selectedAnswer = null;
-    let completedQuizzes = JSON.parse(localStorage.getItem('completedQuizzes') || '[]');
+    let completedQuizzes = [];
 
     // Google Spreadsheetからクイズデータを取得
     async function loadQuizDataFromSpreadsheet() {
@@ -579,7 +586,7 @@
         }
         
         console.log('Loaded quiz data:', quizData); // デバッグ用
-        createQuizMarkers();
+        createQuizMarkers(quizData);
         updateProgress();
       } catch (error) {
         console.error('スプレッドシートからのデータ読み込みに失敗しました:', error);
@@ -643,7 +650,7 @@
     }
 
     // クイズマーカーをMapboxで作成
-    function createQuizMarkers() {
+    function createQuizMarkers(quizData) {
       // 既存のマーカーを削除
       quizMarkers.forEach(m => m.remove());
       quizMarkers = [];
@@ -678,6 +685,7 @@
             </div>
           `);
         // マーカー生成
+        console.log('aaaa marker for:', quiz); // デバッグ用
         const marker = new mapboxgl.Marker(el)
           .setLngLat([quiz.longitude, quiz.latitude])
           .setPopup(popup)
@@ -739,7 +747,6 @@
         // 完了リストに追加
         if (!completedQuizzes.includes(currentQuiz.id)) {
           completedQuizzes.push(currentQuiz.id);
-          localStorage.setItem('completedQuizzes', JSON.stringify(completedQuizzes));
           updateQuizMarkers();
           updateProgress();
         }
