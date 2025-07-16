@@ -166,27 +166,7 @@
       box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
     }
     
-    .quiz-list-btn {
-      position: fixed;
-      top: 20px;
-      right: 350px;
-      background: linear-gradient(135deg, #2196F3, #42A5F5);
-      padding: 12px 18px;
-      border-radius: 25px;
-      font-size: 0.9em;
-      font-weight: bold;
-      color: white;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-      border: 2px solid white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .quiz-list-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
-    }
+
     
     .quiz-list-modal {
       display: none;
@@ -392,7 +372,8 @@
     🎯 クイズ地点へ
   </button>
   
-  <!-- 問題一覧ボタン -->
+
+  
   <!-- クイズモーダル -->
   <div id="quiz-modal" class="quiz-modal">
     <div class="quiz-content">
@@ -447,8 +428,8 @@
     async function loadQuizDataFromSpreadsheet() {
       try {
         // Google SpreadsheetのID（URLから取得）
-        const spreadsheetId = '1kshDopEBMw-7chK-TyV8_vp9Qhwe25ScoZ-BYmIJnL8';
-        const sheetId = '1428824004'; // シートID
+        const spreadsheetId = '1AZgfYRfWLtVXH7rx7BeEPmbmdy7EfnGDbAwi6bMSNsU';
+        const sheetId = '1539806665'; // シートID
         
         console.log('Fetching data from spreadsheet...'); // デバッグ用
         
@@ -897,8 +878,11 @@
     document.getElementById('minstaBtn').addEventListener('click', function() {
       window.location.href = 'https://kashiwa-no-ha.liqlid.jp/';
     });
-    // questBtnのイベントリスナーをクイズ一覧表示に変更
-    document.getElementById('questBtn').addEventListener('click', showQuizList);
+    // questBtnにクイズ一覧の機能を移す
+    document.getElementById('questBtn').addEventListener('click', function() {
+      // クイズ一覧モーダルを表示
+      showQuizList();
+    });
 
     // クイズ関連のイベントリスナーを設定
     document.getElementById('quiz-submit').addEventListener('click', submitQuiz);
@@ -908,6 +892,8 @@
     
     // クイズ地点に飛ぶボタンのイベントリスナー
     document.getElementById('fly-to-quiz-btn').addEventListener('click', flyToQuizLocation);
+    
+
     
     // 問題一覧モーダルの閉じるボタン
     document.getElementById('quiz-list-close').addEventListener('click', () => {
