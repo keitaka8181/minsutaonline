@@ -166,7 +166,27 @@
       box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
     }
     
-
+    .quiz-list-btn {
+      position: fixed;
+      top: 20px;
+      right: 350px;
+      background: linear-gradient(135deg, #2196F3, #42A5F5);
+      padding: 12px 18px;
+      border-radius: 25px;
+      font-size: 0.9em;
+      font-weight: bold;
+      color: white;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+      border: 2px solid white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .quiz-list-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+    }
     
     .quiz-list-modal {
       display: none;
@@ -372,7 +392,10 @@
     🎯 クイズ地点へ
   </button>
   
-
+  <!-- 問題一覧ボタン -->
+  <button class="quiz-list-btn" id="quiz-list-btn" style="display: none;">
+    📋 問題一覧
+  </button>
   
   <!-- クイズモーダル -->
   <div id="quiz-modal" class="quiz-modal">
@@ -429,7 +452,7 @@
       try {
         // Google SpreadsheetのID（URLから取得）
         const spreadsheetId = '1AZgfYRfWLtVXH7rx7BeEPmbmdy7EfnGDbAwi6bMSNsU';
-        const sheetId = '1539806665'; // シートID
+        const sheetId = '313321768'; // シートID
         
         console.log('Fetching data from spreadsheet...'); // デバッグ用
         
@@ -749,8 +772,22 @@
 
     // 問題一覧を表示する機能
     function showQuizList() {
+      console.log('showQuizList called'); // デバッグ用
+      console.log('quizData:', quizData); // デバッグ用
+      
       const container = document.getElementById('quiz-list-container');
+      if (!container) {
+        console.error('quiz-list-container not found'); // デバッグ用
+        return;
+      }
+      
       container.innerHTML = '';
+      
+      if (quizData.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">クイズデータが読み込まれていません</div>';
+        document.getElementById('quiz-list-modal').style.display = 'flex';
+        return;
+      }
       
       quizData.forEach((quiz, index) => {
         const isCompleted = completedQuizzes.includes(quiz.id);
@@ -775,6 +812,7 @@
       });
       
       document.getElementById('quiz-list-modal').style.display = 'flex';
+      console.log('Quiz list modal displayed'); // デバッグ用
     }
 
     // 問題一覧から地図に移動
@@ -878,8 +916,10 @@
     document.getElementById('minstaBtn').addEventListener('click', function() {
       window.location.href = 'https://kashiwa-no-ha.liqlid.jp/';
     });
-    // questBtnにクイズ一覧の機能を移す
+    // questBtnのイベントリスナーをクイズ一覧表示に変更
     document.getElementById('questBtn').addEventListener('click', function() {
+      console.log('Quest button clicked'); // デバッグ用
+      console.log('Quiz data length:', quizData.length); // デバッグ用
       // クイズ一覧モーダルを表示
       showQuizList();
     });
@@ -893,7 +933,8 @@
     // クイズ地点に飛ぶボタンのイベントリスナー
     document.getElementById('fly-to-quiz-btn').addEventListener('click', flyToQuizLocation);
     
-
+    // 問題一覧ボタンのイベントリスナー
+    document.getElementById('quiz-list-btn').addEventListener('click', showQuizList);
     
     // 問題一覧モーダルの閉じるボタン
     document.getElementById('quiz-list-close').addEventListener('click', () => {
@@ -961,10 +1002,33 @@
       console.log('Quiz data loading completed. Total quizzes:', quizData.length);
       // ボタンの表示/非表示を制御
       const flyButton = document.getElementById('fly-to-quiz-btn');
+      const listButton = document.getElementById('quiz-list-btn');
       if (quizData.length > 0) {
         flyButton.style.display = 'block';
+        listButton.style.display = 'block';
       } else {
         flyButton.style.display = 'none';
+        listButton.style.display = 'none';
+      }
+    }).catch(error => {
+      console.error('Failed to load quiz data:', error);
+      // エラーが発生した場合でもフォールバックデータを使用
+      if (quizData.length === 0) {
+        console.log('Using fallback data due to error');
+        // フォールバックデータを確実に設定
+        quizData = [
+          {
+            id: 1,
+            location: "柏の葉アクアテラス",
+            latitude: 35.89868697,
+            longitude: 139.9532173,
+            question: "アクアマリンの近くにいる動物は？",
+            options: ["ライオン", "かえる", "くま", "きりん"],
+            correctAnswer: 2
+          }
+        ];
+        createQuizMarkers();
+        updateProgress();
       }
     });
   </script>
